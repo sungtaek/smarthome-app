@@ -25,7 +25,41 @@ public class Command  {
     public Command(TextView resultView) {
         this.resultView = resultView;
     }
+    
+    public enum Action {
+        LED_ON      ("Led ON", "led", "on", "불꺼", "꺼"),
+        LED_OFF     ("Led OFF", "led", "off", "불켜", "켜"),
+        TEMPERATURE ("Temperature", "thermometer", "get", "온도", "지금온도", "현재온도"),
+        HUMIDITY    ("Humidity", "hygrometer", "get", "습도", "지금습도", "현재습도"),
 
+
+        UNKNOWN(null, null, null, null);
+
+        private String name;
+        private String target;
+        private String command;
+        private String[] texts;
+
+        private Action(String name, String target, String command, String... texts) {
+            this.name = name;
+            this.target = target;
+            this.command = command;
+            this.texts = texts;
+        }
+
+        public static Action search(String text) {
+            for(Action action: Action.values()) {
+                if(action.texts != null) {
+                    for(String t: action.texts) {
+                        if(t.equalsIgnoreCase(text))
+                            return action;
+                    }
+                }
+            }
+            return null;
+        }
+    }
+    
     public void connect(String url) throws URISyntaxException {
         socket = IO.socket(url);
 
@@ -63,37 +97,22 @@ public class Command  {
     }
 
     public JSONObject getAction(String cmd) throws JSONException {
-        JSONObject action = null;
+        Action action = null;
+        JSONObject actionData = null;
 
         cmd = cmd.replaceAll("\\s+","");
         Log.d("CMD", "command [" + cmd + "]");
 
-        if("불켜".equalsIgnoreCase(cmd)) {
-            action = new JSONObject();
-            action.put("name", "led on");
-            action.put("source", "user");
-            action.put("target", "led");
-            action.put("command", "on");
+        action = Action.search(cmd);
+        if(action != null) {
+            actionData = new JSONObject();
+            actionData.put("name", action.name);
+            actionData.put("source", "user");
+            actionData.put("target", action.target);
+            actionData.put("command", action.command);
         }
-        else if("불꺼".equalsIgnoreCase(cmd)) {
-            action = new JSONObject();
-            action.put("name", "led off");
-            action.put("source", "user");
-            action.put("target", "led");
-            action.put("command", "off");
-        }
-        /*
-        else {
-            Log.d("CMD", "not match");
-            action = new JSONObject();
-            action.put("name", "not match");
-            action.put("target", "led");
-            action.put("do", "off");
-            action.put("cmd", cmd);
-        }
-        */
 
-        return action;
+        return actionData;
     }
 
     public void send(JSONObject action) throws JSONException {
