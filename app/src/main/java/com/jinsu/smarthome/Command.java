@@ -27,8 +27,8 @@ public class Command  {
     }
     
     public enum Action {
-        LED_ON      ("Led ON", "led", "on", "불꺼", "꺼"),
-        LED_OFF     ("Led OFF", "led", "off", "불켜", "켜"),
+        LED_ON      ("Led ON", "led", "on", "불켜", "켜"),
+        LED_OFF     ("Led OFF", "led", "off", "불꺼", "꺼"),
         TEMPERATURE ("Temperature", "thermometer", "get", "온도", "지금온도", "현재온도"),
         HUMIDITY    ("Humidity", "hygrometer", "get", "습도", "지금습도", "현재습도"),
 
