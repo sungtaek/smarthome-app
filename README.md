@@ -1,2 +1,2 @@
-# Smarthome-app
-Smarthome android app
+# smarthome-app
+smarthome android app
